@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>swiper</title>
+</head>
+<style>
+    .container{
+        width:1024px;
+        height: 768px;
+        background-color: #98E8EF;
+    }
+    .swiper{
+        width: 100%;
+        height: 100%;
+        background-color: #c4e3f3;
+        overflow: hidden;
+        position:absolute;
+    }
+    .swiper ul{
+        list-style: none;
+        margin:0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .swiper li{
+        width: 1024px;
+        height: 100%;
+        cursor: pointer;
+        float: left;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .lt-container,.gt-container{
+        width: 50px;
+        height: 100%;
+        position: absolute;
+        z-index: 999;
+    }
+    .lt-container{
+        left:0;
+    }
+    .gt-container{
+        right:0;
+    }
+    .lt-container p,.gt-container p{
+        margin: auto 0;
+        color: #ffffff;
+        font-size: 80px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 999;
+        transition: all .3s linear;
+    }
+    .lt-container p:hover,.gt-container p:hover{
+        transform: scale(1.2);
+    }
+    .circle-container{
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+    }
+    .circle-all{
+        margin: 0 auto;
+        width: 200px;
+    }
+    .circle{
+        width: 20px;
+        height: 20px;
+        background-color: #f5f5f5;
+        border-radius: 10px;
+        transition: all .3s linear;
+        float: left;
+        margin-left: 20px;
+        cursor: pointer;
+    }
+    .circle:hover{
+        transform: scale(1.2);
+        background-color: #B1CBE6;
+    }/*
+    .circle-click{
+        width: 60px;
+        height: 30px;
+        background-color: #04C6D8;
+        border-radius: 10px;
+    }*/
+</style>
+<body>
+    <div class="container">
+        <div class="swiper">
+            <ul>
+                <li><img src="./img/test/1.png" alt=""></li>
+                <li><img src="./img/test/2.png" alt=""></li>
+                <li><img src="./img/test/3.png" alt=""></li>
+                <li><img src="./img/test/4.png" alt=""></li>
+                <li><img src="./img/test/5.png" alt=""></li>
+                <li><img src="./img/test/6.png" alt=""></li>
+            </ul>
+            <div class="lt-container">
+                <p id="lt">&lt;</p>
+            </div>
+            <div class="gt-container">
+                <p id="gt">&gt;</p>
+            </div>
+            <div class="circle-container">
+                <div class="circle-all">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        //  配置变量区域
+        var data={
+            oSw:document.querySelector('.swiper'),
+            oUl:document.querySelector('.swiper ul'),
+            aLi:document.querySelectorAll('.swiper li')
+        };
+        //  真正的程序运行区域
+        var oSw=document.querySelector('.swiper');
+        var oUl=document.querySelector('.swiper ul');
+        var aLi=document.querySelectorAll('.swiper li');
+        n=aLi.length;
+        oUl.style.width=n+"00%";
+        var lli=aLi[0].offsetWidth;
+        for(var oLi of aLi){
+            oLi.ondragstart=function () {
+                return false;
+            };
+            oLi.onselectstart=function () {
+                return false;
+            };
+        }
+        oUl.transform=0;
+        oSw.addEventListener('mousedown',foo);
+        oSw.addEventListener('mousemove',foo);
+        oSw.addEventListener('mouseup',foo);
+        var mouseFlag = false;
+        var startX;
+        function foo() {
+            var e=window.event;
+            switch (e.type){
+                case 'mousedown':
+                    startX=e.clientX;
+                    mouseFlag=true;
+                    oUl.style.transition='';
+                    break;
+                case 'mousemove':
+                    if(mouseFlag){
+                        var moveX=e.clientX-startX+oUl.transform;
+                        oUl.style.transform='translateX('+moveX+'px)';
+                        startX=e.clientX;
+                        oUl.transform=moveX;
+                    }
+                    break;
+                case 'mouseup':
+                    mouseFlag = false;
+                    moveX=oUl.transform;
+                    moveX=Math.min(0,moveX);
+                    moveX=Math.max(-(n-1)*lli,moveX);
+                    moveX=-Math.round(-moveX/lli)*lli;
+                    oUl.style.transition='0.5s';
+                    oUl.style.transform='translateX('+moveX+'px)';
+                    oUl.transform=moveX;
+                    break;
+            }
+        }
+        document.getElementsByClassName('.lt').onclick=()=>{
+            aLi.style.left=-n;
+        };
+        document.getElementsByClassName('.gt').onclick=()=>{
+            aLi.style.right=-n;
+        };
+    </script>
+</body>
+</html>
